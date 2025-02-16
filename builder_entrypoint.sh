@@ -42,6 +42,23 @@ else
     echo "build_tools already exists, skipping clone."
 fi
 
+
+
+## Apply patch
+echo "Applying patches..."
+cd ${BUILDER_HOME}/build_tools
+git apply ${BUILDER_HOME}/patches/build_tools.patch
+
+cd ${BUILDER_HOME}/document-server-package
+
+
+
+## Start building
+echo "Building..."
+cd ${BUILDER_HOME}/build_tools/tools/linux
+python3 ./automate.py server --branch=tags/${PRODUCT_VERSION}.${BUILD_NUMBER}
+
+
 # Modify Makefile
 cd ${BUILDER_HOME}/document-server-package/
 cat << EOF >> Makefile
@@ -57,23 +74,11 @@ make deb_dependencies
 cd ${BUILDER_HOME}/document-server-package/deb/build/
 apt-get -qq build-dep -y ./
 
-cd ${BUILDER_HOME}/document-server-package
-make deb
-
-## Apply patch
-echo "Applying patches..."
-cd ${BUILDER_HOME}/build_tools
-git apply ${BUILDER_HOME}/patches/build_tools.patch
-
-cd ${BUILDER_HOME}/document-server-package
-
 # Remove old Node.js versions
 echo "Removing old Node.js versions..."
 apt-get remove -y nodejs libnode72 || true
 apt-get autoremove -y
 rm -rf /var/cache/apt/archives/nodejs_*.deb
 
-## Start building
-echo "Building..."
-cd ${BUILDER_HOME}/build_tools/tools/linux
-python3 ./automate.py server --branch=tags/${PRODUCT_VERSION}.${BUILD_NUMBER}
+cd ${BUILDER_HOME}/document-server-package
+make deb
