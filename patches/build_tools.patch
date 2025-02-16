@@ -1,68 +1,28 @@
-diff --git a/make.py b/make.py
-index 199b431..fd7bc33 100755
---- a/make.py
-+++ b/make.py
-@@ -66,12 +66,16 @@ base.check_build_version(base_dir)
+--- make.py     2025-02-16 09:59:46.786459200 +0000
++++ make.py_bkp 2025-02-16 10:08:05.159593876 +0000
+@@ -14,6 +14,7 @@
+ import deploy
+ import make_common
+ import develop
++import os
 
- # update
+ # parse configuration
+ config.parse()
+@@ -55,7 +56,16 @@
  if ("1" == config.option("update")):
-+  print("+++ Updating repositories...")
    repositories = base.get_repositories()
    base.update_repositories(repositories)
 -
++  print(repositories)
++  print("Current Directory:", os.getcwd())
++  base.update_repositories(repositories)
++  print("Current Directory:", os.getcwd())
++  server_dir = os.path.join(os.getcwd(), "..", "server")
++  os.chdir(server_dir)
++  print("Changed Directory to:", os.getcwd())
++  os.system("patch Common/sources/constants.js < /root/patches/unlimited_license.patch")
++  print("Updated LICENSE_CONNECTIONS and LICENSE_USERS to 99999 in constants.js")
++  exit(0)
  base.configure_common_apps()
 
  # developing...
-+print("++++ developing....")
-+
- develop.make()
-
- # check only js builds
-diff --git a/scripts/base.py b/scripts/base.py
-index 0d0d1b4..08f0075 100644
---- a/scripts/base.py
-+++ b/scripts/base.py
-@@ -535,6 +535,14 @@ def get_ssh_base_url():
- def git_update(repo, is_no_errors=False, is_current_dir=False, git_owner=""):
-   print("[git] update: " + repo)
-   owner = git_owner if git_owner else "ONLYOFFICE"
-+  unlimited_organization = "ONLYOFFICE"
-+  unlimited_tag_suffix = "-cyberarrow"
-+  unlimited_modified_repos = ["server", "web-apps"]
-+  if (repo in unlimited_modified_repos):
-+      owner = unlimited_organization
-+      branch_to_checkout = config.option("branch")
-+  else:
-+      branch_to_checkout = re.sub(unlimited_tag_suffix, '', config.option("branch"))
-   url = "https://github.com/" + owner + "/" + repo + ".git"
-   if git_is_ssh():
-     url = get_ssh_base_url() + repo + ".git"
-@@ -1842,4 +1850,4 @@ def setup_local_qmake(dir_qmake):
-   dir_base = os.path.dirname(dir_qmake)
-   writeFile(dir_base + "/onlyoffice_qt.conf", "Prefix = " + dir_base)
-   return
--
-\ No newline at end of file
-+
-diff --git a/tools/linux/deps.py b/tools/linux/deps.py
-index 687312e..1a6d0a4 100755
---- a/tools/linux/deps.py
-+++ b/tools/linux/deps.py
-@@ -49,7 +49,7 @@ def install_deps():
-     base.cmd("sudo", ["apt-get", "install", "-y", package], True)
-
-   # nodejs
--  base.cmd("sudo", ["apt-get", "install", "-y", "nodejs"])
-+  #base.cmd("sudo", ["apt-get", "install", "-y", "nodejs"])
-   nodejs_cur = 0
-   try:
-     nodejs_version = base.run_command('node -v')['stdout']
-@@ -62,7 +62,7 @@ def install_deps():
-   if (nodejs_cur < 16000):
-     print("Node.js version cannot be less 16")
-     print("Reinstall")
--    base.run_as_bat(["curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&sudo apt-get install -y nodejs"])
-+    base.run_as_bat(["curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&sudo apt-get install -y nodejs"])
-   else:
-     print("OK")
-     base.cmd("sudo", ["apt-get", "-y", "install", "npm", "yarn"], True)
