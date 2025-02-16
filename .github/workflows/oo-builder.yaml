@@ -14,6 +14,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set Build Version
+        run: echo "BUILD_VERSION=8.3.0" >> $GITHUB_ENV  # Change the version as needed
+
       - name: Run Build inside Docker
         run: |
-          docker run --rm -v $(pwd):/root ubuntu:22.04 bash /root/builder_entrypoint.sh
+          docker run --rm -v $(pwd):/root \
+            ubuntu:22.04 bash /root/builder_entrypoint.sh ${{ env.BUILD_VERSION }} ${{ github.run_number }}
