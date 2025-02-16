@@ -22,6 +22,12 @@ apt-get update && apt-get install -y \
     devscripts \
     equivs
 
+# Remove old Node.js versions
+echo "Removing old Node.js versions..."
+apt-get remove -y nodejs libnode72 || true
+apt-get autoremove -y
+rm -rf /var/cache/apt/archives/nodejs_*.deb
+
 # Ensure python symlink exists
 ln -sf /usr/bin/python3 /usr/bin/python
 
