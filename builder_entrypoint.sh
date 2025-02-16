@@ -56,10 +56,10 @@ git diff make.py
 
 
 
-# ## Start building
-# echo "Building..."
-# cd ${BUILDER_HOME}/build_tools/tools/linux
-# python3 ./automate.py server --branch=tags/${PRODUCT_VERSION}.${BUILD_NUMBER}
+## Start building
+echo "Building..."
+cd ${BUILDER_HOME}/build_tools/tools/linux
+python3 ./automate.py server --branch=tags/${PRODUCT_VERSION}.${BUILD_NUMBER}
 
 
 # # Modify Makefile
