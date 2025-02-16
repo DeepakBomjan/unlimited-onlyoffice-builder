@@ -1,18 +1,9 @@
---- make.py     2025-02-16 09:59:46.786459200 +0000
-+++ make.py_bkp 2025-02-16 10:08:05.159593876 +0000
-@@ -14,6 +14,7 @@
- import deploy
- import make_common
- import develop
-+import os
-
- # parse configuration
- config.parse()
-@@ -55,7 +56,16 @@
+--- make.py_bkp	2025-02-16 04:37:28.776690232 -0600
++++ make.py	2025-02-16 04:39:18.988190138 -0600
+@@ -68,6 +68,16 @@
  if ("1" == config.option("update")):
    repositories = base.get_repositories()
    base.update_repositories(repositories)
--
 +  print(repositories)
 +  print("Current Directory:", os.getcwd())
 +  base.update_repositories(repositories)
@@ -23,6 +14,5 @@
 +  os.system("patch Common/sources/constants.js < /root/patches/unlimited_license.patch")
 +  print("Updated LICENSE_CONNECTIONS and LICENSE_USERS to 99999 in constants.js")
 +  exit(0)
- base.configure_common_apps()
 
- # developing...
+ base.configure_common_apps()
