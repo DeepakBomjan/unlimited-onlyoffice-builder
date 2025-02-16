@@ -10,8 +10,6 @@ index 199b431..fd7bc33 100755
    repositories = base.get_repositories()
    base.update_repositories(repositories)
 -
-+print("Applying License patch...")
-+os.system("cd /server && git apply /build_tools/license_update.patch")
  base.configure_common_apps()
 
  # developing...
