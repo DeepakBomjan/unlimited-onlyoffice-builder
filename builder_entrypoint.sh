@@ -47,38 +47,41 @@ fi
 ## Apply patch
 echo "Applying patches..."
 cd ${BUILDER_HOME}/build_tools
-git apply ${BUILDER_HOME}/patches/build_tools.patch
+patch -p1 < ${BUILDER_HOME}/patches/build_tools.patch
 
-cd ${BUILDER_HOME}/document-server-package
+git status 
+git diff make.py
 
-
-
-## Start building
-echo "Building..."
-cd ${BUILDER_HOME}/build_tools/tools/linux
-python3 ./automate.py server --branch=tags/${PRODUCT_VERSION}.${BUILD_NUMBER}
+# cd ${BUILDER_HOME}/document-server-package
 
 
-# Modify Makefile
-cd ${BUILDER_HOME}/document-server-package/
-cat << EOF >> Makefile
 
-deb_dependencies: \$(DEB_DEPS)
+# ## Start building
+# echo "Building..."
+# cd ${BUILDER_HOME}/build_tools/tools/linux
+# python3 ./automate.py server --branch=tags/${PRODUCT_VERSION}.${BUILD_NUMBER}
 
-EOF
 
-# Install Debian dependencies
-echo "Installing Debian dependencies..."
-make deb_dependencies
+# # Modify Makefile
+# cd ${BUILDER_HOME}/document-server-package/
+# cat << EOF >> Makefile
 
-cd ${BUILDER_HOME}/document-server-package/deb/build/
-apt-get -qq build-dep -y ./
+# deb_dependencies: \$(DEB_DEPS)
 
-# Remove old Node.js versions
-echo "Removing old Node.js versions..."
-apt-get remove -y nodejs libnode72 || true
-apt-get autoremove -y
-rm -rf /var/cache/apt/archives/nodejs_*.deb
+# EOF
 
-cd ${BUILDER_HOME}/document-server-package
-make deb
+# # Install Debian dependencies
+# echo "Installing Debian dependencies..."
+# make deb_dependencies
+
+# cd ${BUILDER_HOME}/document-server-package/deb/build/
+# apt-get -qq build-dep -y ./
+
+# # Remove old Node.js versions
+# echo "Removing old Node.js versions..."
+# apt-get remove -y nodejs libnode72 || true
+# apt-get autoremove -y
+# rm -rf /var/cache/apt/archives/nodejs_*.deb
+
+# cd ${BUILDER_HOME}/document-server-package
+# make deb
