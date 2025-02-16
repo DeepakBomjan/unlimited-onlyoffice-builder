@@ -47,8 +47,7 @@ fi
 ## Apply patch
 echo "Applying patches..."
 cd ${BUILDER_HOME}/build_tools
-patch -p1 < ${BUILDER_HOME}/patches/build_tools.patch
-patch -p1 < ${BUILDER_HOME}/patches/license_update.patch
+patch make.py < build_tools.patch
 
 git status 
 git diff make.py
